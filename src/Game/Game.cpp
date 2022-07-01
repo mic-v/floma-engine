@@ -1,24 +1,34 @@
 #include "Game.h"
+
+#ifdef WINDOW_BUILD
+#include <SDL.h>
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#endif
+
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-Game::Game() : windowHeight(0), windowWidth(0), is_running(false)
+#include "../Logger/Logger.h"
+
+Game::Game() : windowHeight(0), windowWidth(0), is_running(false), millisecsPreviousFrame(0)
 {
-    std::cout << "Game created\n";
+    Logger::Log("Game created");
 }
 
 Game::~Game()
 {
-    std::cout << "Game destroyed\n";
+    Logger::Log("Game destroyed");
 }
 
 void Game::Initialize()
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0) 
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        std::cerr << "Error initializing SDL." << std::endl;
+        Logger::Err("Error initializing SDL.");
         return;
     }
 
@@ -28,19 +38,19 @@ void Game::Initialize()
     windowHeight = displayMode.h;
     windowWidth = displayMode.w;
 
-    this->m_window = SDL_CreateWindow("Floma Engine", 
-    SDL_WINDOWPOS_CENTERED, 
-    SDL_WINDOWPOS_CENTERED, 
-    windowWidth, windowHeight,
-    0);
-    
-    if(!this->m_window) {
-        std::cerr << "Error initializing SDL window." << std::endl;
+    this->m_window = SDL_CreateWindow("Floma Engine",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        windowWidth, windowHeight,
+        0);
+
+    if (!this->m_window) {
+        Logger::Err("Error initializing SDL window.");
         return;
     }
     this->m_renderer = SDL_CreateRenderer(m_window, -1, 0);
-    if(!this->m_renderer) {
-        std::cerr << "Error initializing SDL renderer." << std::endl;
+    if (!this->m_renderer) {
+        Logger::Err("Error initializing SDL renderer.");
         return;
     }
 
@@ -54,15 +64,15 @@ glm::vec2 playerVelocity;
 
 void Game::Setup()
 {
-    playerPosition = glm::vec2(10.0,600.0);
-    playerVelocity = glm::vec2(1.0,0.0);
+    playerPosition = glm::vec2(10.0, 20.0);
+    playerVelocity = glm::vec2(10.0, 5.0);
     //TODO: Initialize game objects
 }
 
 void Game::Run()
 {
     Setup();
-    while(is_running) 
+    while (is_running)
     {
         ProcessInput();
         Update();
@@ -74,36 +84,42 @@ void Game::Run()
 void Game::ProcessInput()
 {
     SDL_Event sdlEvent;
-    while(SDL_PollEvent(&sdlEvent))
+    while (SDL_PollEvent(&sdlEvent))
     {
-        switch(sdlEvent.type)
+        switch (sdlEvent.type)
         {
-            case SDL_QUIT:
+        case SDL_QUIT:
+            is_running = false;
+            break;
+        case SDL_KEYDOWN:
+            if (sdlEvent.key.keysym.sym == SDLK_ESCAPE)
                 is_running = false;
-                break;
-            case SDL_KEYDOWN:
-                if(sdlEvent.key.keysym.sym == SDLK_ESCAPE)
-                    is_running = false;
-                break;
+            break;
         }
     }
 }
 
 void Game::Update()
 {
+    // If we are too fast, waste some time until we reach the MILLISECS_PER_FRAME
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
-    if(timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME)
+    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME)
         SDL_Delay(timeToWait);
-        
+
+    //The difference in ticks since the last frame, converted to seconds
+    double deltaTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
+
     //Store the current frame time
     millisecsPreviousFrame = SDL_GetTicks();
 
-    std::cout << millisecsPreviousFrame << std::endl;
+    //std::cout << millisecsPreviousFrame << std::endl;
 
     //TODO: update game objects
-    playerPosition.x += playerVelocity.x;
+    playerPosition.x += playerVelocity.x * deltaTime;
     //playerPosition.y +=
-    playerPosition.y += playerVelocity.y;
+    playerPosition.y += playerVelocity.y * deltaTime;
+
+   
 }
 
 void Game::Render()
@@ -123,7 +139,7 @@ void Game::Render()
     SDL_FreeSurface(surface);
 
 
-    SDL_Rect dstReact = {(int)playerPosition.x, (int)playerPosition.y, 64, 64};
+    SDL_Rect dstReact = { (int)playerPosition.x, (int)playerPosition.y, 32, 32 };
     SDL_RenderCopy(m_renderer, texture, NULL, &dstReact);
     SDL_DestroyTexture(texture);
 

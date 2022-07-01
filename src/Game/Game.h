@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef WINDOW_BUILD
+#include <SDL.h>
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;

@@ -1,6 +1,7 @@
 #include <iostream>
 
 
+#define SDL_MAIN_HANDLED
 
 #ifdef WINDOW_BUILD
 #include <SDL.h>
@@ -20,7 +21,7 @@
 #include <imgui/imgui.h>
 #include <sol/sol.hpp>
 
-#include "Game.h"
+#include "Game/Game.h"
 
 // Create git ignore for tmrw
 
