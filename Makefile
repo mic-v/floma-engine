@@ -6,9 +6,12 @@ CC = g++
 LANG_STD = -std=c++17
 COMPILER_FLAGS = -Wall -Wfatal-errors
 INCLUDE_PATH = -I"./libs/"
-SRC_FILES = ./src/*.cpp ./src/Logger/*.cpp ./src/Game/*.cpp
+SRC_FILES = ./src/*.cpp \
+			./src/Logger/*.cpp \
+			./src/Game/*.cpp \
+			./src/ECS/*.cpp
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -llua5.3
-OBJ_NAME = Floma;
+OBJ_NAME = Floma
 
 ###################################
 # Declare Makefile rules
@@ -16,7 +19,7 @@ OBJ_NAME = Floma;
 
 
 build:
-	$(CC) $(COMPILER_FLAGS) $(LANG_STD) $($INCLUDE_PATH) $(SRC_FILES) $(LINKER_FLAGS) -o $(OBJ_NAME);
+	$(CC) $(COMPILER_FLAGS) $(LANG_STD) $(INCLUDE_PATH) $(SRC_FILES) $(LINKER_FLAGS) -o $(OBJ_NAME);
 
 run:
 	./$(OBJ_NAME)

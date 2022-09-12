@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
 
 Game::Game() : windowHeight(0), windowWidth(0), is_running(false), millisecsPreviousFrame(0)
 {
@@ -65,7 +66,7 @@ glm::vec2 playerVelocity;
 void Game::Setup()
 {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(10.0, 5.0);
+    playerVelocity = glm::vec2(10.0, 0.0);
     //TODO: Initialize game objects
 }
 
@@ -124,7 +125,7 @@ void Game::Update()
 
 void Game::Render()
 {
-    SDL_SetRenderDrawColor(m_renderer, 70, 125, 255, 255);
+    SDL_SetRenderDrawColor(m_renderer, 70, 180, 255, 255);
     SDL_RenderClear(m_renderer);
 
     //TODO: render all game objects
