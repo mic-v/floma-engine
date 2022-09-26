@@ -3,6 +3,8 @@
 #include "../Logger/Logger.h"
 
 
+int IComponent::nextID = 0;
+
 int Entity::GetID() const 
 {
     return this->id;
@@ -34,11 +36,31 @@ const Signature& System::GetComponentSignature() const
     return componentSignature;
 }
 
+void Registry::AddEntityToSystems(Entity entity)
+{
+    const auto entityID = entity.GetID();
+
+    const auto& entityComponentSignature = entityComponentSignatures[entityID];
+
+    // Loop all the systems
+    for(auto& system: systems)
+    {
+        const auto& systemComponentSignature = system.second->GetComponentSignature();
+        bool isInterested = (entityComponentSignature & systemComponentSignature) == systemComponentSignature;
+
+        if(isInterested)
+        {
+            system.second->AddEntityToSystem(entity);
+        }
+    }
+}
+
 Entity Registry::CreateEntity() 
 {
-    int entityID = numEntities++;
-    if(entity >= entityComponentSignature.size())
-        entityComponentSignature.resize(entityID + 1);
+    int entityID;
+    
+    entityID = numEntities++;
+
     Entity entity(entityID);
     entitiesToBeAdded.insert(entity);
 
@@ -51,5 +73,3 @@ void Registry::Update()
 {
 
 }
-
-void Registry::AddEntityToSystem(Entity entity);
