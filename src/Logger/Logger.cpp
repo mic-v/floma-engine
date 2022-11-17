@@ -24,11 +24,20 @@ void Logger::Log(const std::string& message)
 	messages.push_back(logEntry);
 }
 
+void Logger::Warn(const std::string& message)
+{
+	LogEntry logEntry;
+	logEntry.type = LOG_WARNING;
+		logEntry.message = "[LogWARN - " + CurrentDateTimeToString() + "]: " + message;
+	std::cout <<"\x1B[33m" << logEntry.message << "\033[0m\n";
+	messages.push_back(logEntry);
+}
+
 void Logger::Err(const std::string& message)
 {
 	LogEntry logEntry;
 	logEntry.type = LOG_ERROR;
-	logEntry.message = "[LogERR - " + CurrentDateTimeToString() + "]: " + message;
+	logEntry.message = "[LogERR  - " + CurrentDateTimeToString() + "]: " + message;
 	std::cerr << "\x1B[91m" << logEntry.message << "\033[0m\n";
 	messages.push_back(logEntry);
 

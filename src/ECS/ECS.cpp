@@ -3,20 +3,18 @@
 #include "../Logger/Logger.h"
 
 
-int IComponent::nextID = 0;
+size_t IComponent::nextID = 0;
 
-int Entity::GetID() const 
+size_t Entity::GetID() const 
 {
     return this->id;
 }
-
 
 void System::AddEntityToSystem(Entity entity)
 {
     entities.push_back(entity);
 
 }
-
 
 void System::RemoveEntityFromSystem(Entity entity)
 {
@@ -62,7 +60,13 @@ Entity Registry::CreateEntity()
     entityID = numEntities++;
 
     Entity entity(entityID);
+    entity.registry = this;
     entitiesToBeAdded.insert(entity);
+
+    // Make sure the entityComponentSignature vector can accomodate the new entity
+    if(entityID >= static_cast<int>(entityComponentSignatures.size())) {
+        entityComponentSignatures.resize(entityID + 1);
+    }
 
     Logger::Log("Entity created with a id = " + std::to_string(entityID));
 
@@ -71,5 +75,14 @@ Entity Registry::CreateEntity()
 
 void Registry::Update()
 {
+    for(auto entity: entitiesToBeAdded) 
+    {
+        AddEntityToSystems(entity);
+    }
+    entitiesToBeAdded.clear();
 
+    //TODO: remove entities to be removed from the game.
+    for(auto entity: entitiesToBeKilled)
+    {
+    }
 }

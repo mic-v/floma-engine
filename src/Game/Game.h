@@ -7,6 +7,9 @@
 #include <SDL2/SDL.h>
 #endif
 
+
+#include "../ECS/ECS.h"
+
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
 
@@ -24,6 +27,9 @@ public:
 private:
     SDL_Renderer* m_renderer;
     SDL_Window* m_window;
+
+    std::unique_ptr<Registry> m_registry;
+    //Registry* m_registry;
 
     int windowHeight;
     int windowWidth;
