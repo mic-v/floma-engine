@@ -176,6 +176,7 @@ void Game::Render()
     SDL_RenderCopy(m_renderer, texture, NULL, &dstReact);
     SDL_DestroyTexture(texture);
     */
+   
 
 }
 
