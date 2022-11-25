@@ -22,12 +22,12 @@ public:
 
             transform.position.x += rigidbody.velocity.x * dt;
             transform.position.y += rigidbody.velocity.y * dt;
-        Logger::Log("Entity id = " + 
-            std::to_string(entity.GetID()) +
-            " position is now ( " + 
-            std::to_string(transform.position.x) + 
-            ", " + 
-            std::to_string(transform.position.y) + ")");
+        // Logger::Log("Entity id = " + 
+        //     std::to_string(entity.GetID()) +
+        //     " position is now ( " + 
+        //     std::to_string(transform.position.x) + 
+        //     ", " + 
+        //     std::to_string(transform.position.y) + ")");
         }
     }
 private:

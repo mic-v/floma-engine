@@ -18,6 +18,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
+#include <fstream>
 
 Game::Game() : windowHeight(0), windowWidth(0), is_running(false), millisecsPreviousFrame(0)
 {
@@ -66,25 +67,59 @@ void Game::Initialize()
 
     //m_registry = new Registry();
     m_registry = std::make_unique<Registry>();
+    m_assetstore = std::make_unique<AssetStore>();
 }
 
 glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 
-void Game::Setup()
+void Game::LoadLevel(int level)
 {
-    // Add teh systems that need to be processed in our game
+        // Add teh systems that need to be processed in our game
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
+
+    m_assetstore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-tiger-left.png");
+
+    // TODO: load levels tilemaps
+    m_assetstore->AddTexture(m_renderer, "tilemap", "./assets/tilemap/jungle.png");
+    std::map<std::string, Entity> tiles;
+    
+    // TODO: fix this fileopen
+    std::ifstream tilemap ("text.txt");
+    std::string line;
+    std::cout << "test" << "\n";
+    if(tilemap.is_open())
+    {
+        while(getline(tilemap, line))
+        {
+            std::cout << line << "\n";
+
+        }
+        tilemap.close();
+    }
+
+    std::cout << "test2" << "\n";
+
 
     // Create an entity
     Entity tank = m_registry->CreateEntity();
 
+    Entity truck = m_registry->CreateEntity();
 
     // Add some components to that entity
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(10.0, 50.0));
-    tank.AddComponent<SpriteComponent>(50, 50);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
+    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0);
+
+    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(3.0, 2.0), 40.0);
+    truck.AddComponent<RigidBodyComponent>(glm::vec2(35.0, 0));
+    truck.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0);
+}
+
+void Game::Setup()
+{
+    LoadLevel(1);
 }
 
 void Game::Run()
@@ -153,7 +188,7 @@ void Game::Render()
     SDL_RenderClear(m_renderer);
 
 
-    m_registry->GetSystem<RenderSystem>().Update(m_renderer);
+    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetstore);
 
 
     SDL_RenderPresent(m_renderer);
@@ -176,7 +211,7 @@ void Game::Render()
     SDL_RenderCopy(m_renderer, texture, NULL, &dstReact);
     SDL_DestroyTexture(texture);
     */
-   
+
 
 }
 
